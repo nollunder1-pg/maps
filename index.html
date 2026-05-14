@@ -69,6 +69,7 @@
 <div id="yandexMap"></div>
 
 <script>
+
 function showMap(type) {
 
   document.getElementById("googleMap").classList.remove("active");
@@ -108,20 +109,20 @@ ymaps.ready(function () {
 
   });
 });
+
 </script>
 
 <!-- GOOGLE MAPS -->
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAxhNnBCeAfKpWJJiFlD8vBSY8R3AcffE&callback=initMap"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAxhNnBCeAfKpWJJiFlD8vBSY8R3AcffE&callback=initGoogleMap"
   async
   defer>
 </script>
 
 <!-- YANDEX MAPS -->
-<script src="https://api-maps.yandex.ru/2.1/?apikey=42a5fca7-f7b1-4a21-9885-f4ab2d266b38&lang=ru_RU"></script>
+<script
+  src="https://api-maps.yandex.ru/2.1/?apikey=42a5fca7-f7b1-4a21-9885-f4ab2d266b38&lang=ru_RU">
+</script>
 
 </body>
 </html>
-
-
-
