@@ -7,6 +7,7 @@
   <title>Maps</title>
 
   <style>
+
     html, body {
       margin: 0;
       padding: 0;
@@ -50,12 +51,28 @@
     #yandexMap.active {
       display: block;
     }
+
+    #googleSearch {
+      position: absolute;
+      top: 70px;
+      left: 10px;
+      z-index: 999;
+      width: 300px;
+      height: 40px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
   </style>
 </head>
 
 <body>
 
 <div id="topbar">
+
   <button class="tab-btn" onclick="showMap('google')">
     Google Maps
   </button>
@@ -63,12 +80,18 @@
   <button class="tab-btn" onclick="showMap('yandex')">
     Yandex Maps
   </button>
+
 </div>
+
+<input id="googleSearch" type="text" placeholder="Поиск места..." />
 
 <div id="googleMap" class="active"></div>
 <div id="yandexMap"></div>
 
 <script>
+
+let googleMap;
+let yandexMap;
 
 function showMap(type) {
 
@@ -76,43 +99,76 @@ function showMap(type) {
   document.getElementById("yandexMap").classList.remove("active");
 
   if (type === "google") {
+
     document.getElementById("googleMap").classList.add("active");
+    document.getElementById("googleSearch").style.display = "block";
+
   }
 
   if (type === "yandex") {
+
     document.getElementById("yandexMap").classList.add("active");
+    document.getElementById("googleSearch").style.display = "none";
+
   }
 }
 
 function initGoogleMap() {
 
-  new google.maps.Map(document.getElementById("googleMap"), {
+  googleMap = new google.maps.Map(document.getElementById("googleMap"), {
 
     center: {
       lat: 55.7558,
       lng: 37.6176
     },
 
-    zoom: 10,
+    zoom: 10
 
-    clickableIcons: false
+  });
+
+  const input = document.getElementById("googleSearch");
+
+  const searchBox = new google.maps.places.SearchBox(input);
+
+  googleMap.addListener("bounds_changed", () => {
+    searchBox.setBounds(googleMap.getBounds());
+  });
+
+  searchBox.addListener("places_changed", () => {
+
+    const places = searchBox.getPlaces();
+
+    if (places.length === 0) return;
+
+    const place = places[0];
+
+    if (!place.geometry || !place.geometry.location) return;
+
+    googleMap.panTo(place.geometry.location);
+    googleMap.setZoom(15);
+
   });
 }
 
 function initYandexMap() {
 
   if (typeof ymaps === "undefined") {
+
     setTimeout(initYandexMap, 500);
     return;
   }
 
   ymaps.ready(function () {
 
-    new ymaps.Map("yandexMap", {
+    yandexMap = new ymaps.Map("yandexMap", {
 
       center: [55.7558, 37.6176],
+      zoom: 10,
 
-      zoom: 10
+      controls: [
+        "searchControl",
+        "zoomControl"
+      ]
 
     });
 
@@ -125,7 +181,7 @@ initYandexMap();
 
 <!-- GOOGLE MAPS -->
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAxhNnBCeAfKpWJJiFlD8vBSY8R3AcffE&callback=initGoogleMap"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAxhNnBCeAfKpWJJiFlD8vBSY8R3AcffE&libraries=places&callback=initGoogleMap"
   async
   defer>
 </script>
