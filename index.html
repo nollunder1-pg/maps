@@ -83,7 +83,7 @@
 
 </div>
 
-<input id="googleSearch" type="text" placeholder="Поиск места..." />
+<input id="googleSearch" type="text" placeholder="Поиск Google..." />
 
 <div id="googleMap" class="active"></div>
 <div id="yandexMap"></div>
@@ -125,29 +125,6 @@ function initGoogleMap() {
     zoom: 10
 
   });
-
-  const input = document.getElementById("googleSearch");
-
-  const searchBox = new google.maps.places.SearchBox(input);
-
-  googleMap.addListener("bounds_changed", () => {
-    searchBox.setBounds(googleMap.getBounds());
-  });
-
-  searchBox.addListener("places_changed", () => {
-
-    const places = searchBox.getPlaces();
-
-    if (places.length === 0) return;
-
-    const place = places[0];
-
-    if (!place.geometry || !place.geometry.location) return;
-
-    googleMap.panTo(place.geometry.location);
-    googleMap.setZoom(15);
-
-  });
 }
 
 function initYandexMap() {
@@ -163,14 +140,30 @@ function initYandexMap() {
     yandexMap = new ymaps.Map("yandexMap", {
 
       center: [55.7558, 37.6176],
+
       zoom: 10,
 
       controls: [
-        "searchControl",
         "zoomControl"
       ]
 
     });
+
+    const searchControl = new ymaps.control.SearchControl({
+
+      options: {
+
+        provider: 'yandex#search',
+
+        noPlacemark: false,
+
+        resultsPerPage: 5
+
+      }
+
+    });
+
+    yandexMap.controls.add(searchControl);
 
   });
 }
@@ -181,7 +174,7 @@ initYandexMap();
 
 <!-- GOOGLE MAPS -->
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAxhNnBCeAfKpWJJiFlD8vBSY8R3AcffE&libraries=places&callback=initGoogleMap"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAxhNnBCeAfKpWJJiFlD8vBSY8R3AcffE&callback=initGoogleMap"
   async
   defer>
 </script>
